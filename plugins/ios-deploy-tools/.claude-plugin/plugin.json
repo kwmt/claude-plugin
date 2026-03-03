@@ -1,7 +1,7 @@
 {
   "name": "ios-deploy-tools",
   "version": "1.0.0",
-  "description": "fastlane を活用した iOS アプリの TestFlight 配布・App Store 提出を自動化するスキルプラグイン",
+  "description": "fastlane を活用した iOS アプリのセットアップ・ビルド・デプロイを自動化するスキルプラグイン（fastlane 初期化、証明書管理、CI 構築、ローカルビルド、TestFlight・Firebase・App Store 配信）",
   "author": {
     "name": "kwmt"
   }
