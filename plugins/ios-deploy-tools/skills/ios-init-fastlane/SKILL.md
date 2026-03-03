@@ -125,3 +125,19 @@ disable-model-invocation: true
 8. 結果を報告する:
    - 作成したファイル一覧（Gemfile, Appfile, Fastfile）
    - 次のステップ: `/ios-init-match` で証明書管理をセットアップ
+
+## エラー対応
+
+コマンド実行でエラーが発生した場合は、`shared/TROUBLESHOOTING.md` を参照しつつ以下の手順で対応する:
+
+1. エラー出力を分析し、**原因** を特定する
+2. **複数の解決方法** を具体的なコマンド付きで提示する
+3. ユーザーにどの方法で進めるか **選択を求める**
+4. 選択された方法を実行する
+5. それでも失敗した場合は、別の解決方法を提示して再度選択を求める
+
+### このスキル固有のよくあるエラー
+
+- **`gem install` 失敗** → A) `rbenv version` で Ruby 環境を確認 B) `sudo` 権限の問題なら `rbenv exec gem install bundler` を使用
+- **`.xcodeproj` が見つからない** → A) `find . -name "*.xcodeproj" -maxdepth 5` で検索範囲を拡大 B) ユーザーにプロジェクトパスを手動で指定してもらう
+- **`bundle install` 失敗** → A) `Gemfile` の構文を確認 B) `rm -rf vendor/bundle && bundle install` でキャッシュクリア後に再実行
