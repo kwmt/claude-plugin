@@ -7,7 +7,7 @@ fastlane を活用した iOS アプリのセットアップ・ビルド・デプ
 ### マーケットプレイスとして追加
 
 ```
-/plugin marketplace add kwmt/claude-plugine
+/plugin marketplace add kwmt/claude-plugin
 ```
 
 ### プラグインのインストール
