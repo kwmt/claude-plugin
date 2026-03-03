@@ -1,0 +1,8 @@
+{
+  "name": "ios-deploy-tools",
+  "version": "1.0.0",
+  "description": "fastlane を活用した iOS アプリの TestFlight 配布・App Store 提出を自動化するスキルプラグイン",
+  "author": {
+    "name": "kwmt"
+  }
+}
