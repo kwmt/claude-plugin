@@ -13,7 +13,7 @@ fastlane を活用した iOS アプリのセットアップ・ビルド・デプ
 ### プラグインのインストール
 
 ```
-/plugin install ios-deploy-tools@kwmt-ios-tools
+/plugin install ios-deploy-tools@kwmt-tools
 ```
 
 ## スキル一覧

@@ -1,6 +1,6 @@
 {
-  "name": "kwmt-ios-tools",
-  "description": "iOS アプリのデプロイを支援するツール集（fastlane ベース）",
+  "name": "kwmt-tools",
+  "description": "開発を支援するツール集",
   "owner": {
     "name": "kwmt"
   },
