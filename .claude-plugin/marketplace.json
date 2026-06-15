@@ -8,6 +8,10 @@
     {
       "name": "ios-deploy-tools",
       "source": "./plugins/ios-deploy-tools"
+    },
+    {
+      "name": "android-deploy-tools",
+      "source": "./plugins/android-deploy-tools"
     }
   ]
 }

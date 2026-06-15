@@ -1,0 +1,8 @@
+{
+  "name": "android-deploy-tools",
+  "version": "1.0.0",
+  "description": "Firebase CLI を活用した Android / Flutter アプリの Firebase App Distribution 配信を自動化するスキルプラグイン（ローカル配信、GitHub Actions 配信ワークフロー構築。AAB 基本・サービスアカウント認証）",
+  "author": {
+    "name": "kwmt"
+  }
+}
