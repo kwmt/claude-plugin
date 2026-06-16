@@ -14,9 +14,10 @@ fastlane を活用した iOS アプリのセットアップ・ビルド・デプ
 
 ```
 /plugin install ios-deploy-tools@kwmt-tools
+/plugin install android-deploy-tools@kwmt-tools
 ```
 
-## スキル一覧
+## iOS スキル一覧
 
 ### 初期セットアップ（プロジェクト初回のみ）
 
@@ -39,6 +40,25 @@ fastlane を活用した iOS アプリのセットアップ・ビルド・デプ
 | TestFlight 配信 | `/ios-deploy-tools:ios-deploy-testflight` | タグ・Release 作成 → TestFlight 配布 |
 | Firebase 配信 | `/ios-deploy-tools:ios-deploy-firebase` | Firebase App Distribution で配信 |
 | App Store 提出 | `/ios-deploy-tools:ios-deploy-appstore` | App Store Review に提出 |
+
+## Android スキル一覧
+
+Firebase CLI を活用した Android / Flutter アプリの Firebase App Distribution 配信を自動化します。AAB を基本とし、認証はサービスアカウント（`GOOGLE_APPLICATION_CREDENTIALS`）を使用します（`FIREBASE_TOKEN` は非推奨のため使いません）。
+
+| スキル | コマンド | 説明 |
+|--------|---------|------|
+| Firebase 配信 | `/android-deploy-tools:android-deploy-firebase` | Firebase App Distribution で配信（GitHub Actions 推奨 / ローカル両対応） |
+| CI 構築 | `/android-deploy-tools:android-init-ci` | Firebase 配信用 GitHub Actions ワークフローを生成 |
+
+### Android の環境変数 / Secrets
+
+| 変数名 / Secret | 説明 | 用途 |
+|-----------------|------|------|
+| `FIREBASE_APP_ID` | Firebase App ID（`1:xxxx:android:xxxx`） | ローカル / CI |
+| `GOOGLE_APPLICATION_CREDENTIALS` | サービスアカウント JSON 鍵のパス | ローカル |
+| `FIREBASE_SERVICE_ACCOUNT` | サービスアカウント JSON 鍵の全文 | GitHub Actions Secret |
+
+> サービスアカウントには「Firebase App Distribution Admin」ロールを付与してください。AAB の配信には App Distribution の Google Play 連携が必要です（未連携の場合は APK にフォールバックできます）。
 
 ## 依存関係
 
