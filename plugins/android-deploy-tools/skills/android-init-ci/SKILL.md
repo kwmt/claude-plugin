@@ -17,10 +17,13 @@ Android / Flutter アプリを Firebase App Distribution に配信する GitHub 
    - Android / Flutter プロジェクトのパス（リポジトリルートからの相対パス、例: `.`, `android/`, `app/`）
    - Java バージョン（ネイティブ Android の場合、例: `17`）
    - Flutter バージョン / チャンネル（Flutter の場合、例: `stable`）
+   - build variant（flavor / build type）:
+     - flavor が定義されているか確認する（ネイティブ: `app/build.gradle(.kts)` の `productFlavors` / `flavorDimensions`、Flutter: `android/app/build.gradle` の `productFlavors`）。
+     - 定義されていれば既定の flavor を確認する（例: `prod`）。build type は通常 `release`。
    - 既定の成果物（`aab` / `apk`、デフォルト: `aab`）
    - 既定のテスターグループ（デフォルト: `testers`）
 4. `.github/workflows/deploy-android-firebase.yml` を作成する:
-   - トリガー: `workflow_dispatch`（`groups`, `release_notes`, `artifact` の入力）
+   - トリガー: `workflow_dispatch`（`groups`, `release_notes`, `artifact`, `flavor` の入力）
    - ランナー: `ubuntu-latest`
    - Secrets: `FIREBASE_APP_ID`, `FIREBASE_SERVICE_ACCOUNT`
    - ステップ（プロジェクト種別に応じて選択）:
@@ -49,6 +52,10 @@ Android / Flutter アプリを Firebase App Distribution に配信する GitHub 
            description: "成果物 (aab / apk)"
            required: false
            default: "aab"
+         flavor:
+           description: "flavor（任意。未設定可）"
+           required: false
+           default: ""
 
    jobs:
      distribute:
@@ -60,15 +67,18 @@ Android / Flutter アプリを Firebase App Distribution に配信する GitHub 
            with:
              channel: stable
 
-         - name: Build
+         - name: Build & locate artifact
            run: |
+             FLAVOR_ARG=""
+             [ -n "${{ inputs.flavor }}" ] && FLAVOR_ARG="--flavor ${{ inputs.flavor }}"
              if [ "${{ inputs.artifact }}" = "apk" ]; then
-               flutter build apk --release
-               echo "ARTIFACT_PATH=build/app/outputs/flutter-apk/app-release.apk" >> "$GITHUB_ENV"
+               flutter build apk --release $FLAVOR_ARG
+               ARTIFACT_PATH=$(find build/app/outputs/flutter-apk -name '*.apk' | head -1)
              else
-               flutter build appbundle --release
-               echo "ARTIFACT_PATH=build/app/outputs/bundle/release/app-release.aab" >> "$GITHUB_ENV"
+               flutter build appbundle --release $FLAVOR_ARG
+               ARTIFACT_PATH=$(find build/app/outputs/bundle -name '*.aab' | head -1)
              fi
+             echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> "$GITHUB_ENV"
 
          - name: Write service account key
            run: |
@@ -93,16 +103,23 @@ Android / Flutter アプリを Firebase App Distribution に配信する GitHub 
              distribution: temurin
              java-version: "17"
 
-         - name: Build
+         - name: Build & locate artifact
            run: |
-             if [ "${{ inputs.artifact }}" = "apk" ]; then
-               ./gradlew assembleRelease
-               echo "ARTIFACT_PATH=app/build/outputs/apk/release/app-release.apk" >> "$GITHUB_ENV"
+             if [ -n "${{ inputs.flavor }}" ]; then
+               VARIANT="$(echo '${{ inputs.flavor }}' | sed 's/^./\U&/')Release"
              else
-               ./gradlew bundleRelease
-               echo "ARTIFACT_PATH=app/build/outputs/bundle/release/app-release.aab" >> "$GITHUB_ENV"
+               VARIANT="Release"
              fi
+             if [ "${{ inputs.artifact }}" = "apk" ]; then
+               ./gradlew assemble${VARIANT}
+               ARTIFACT_PATH=$(find app/build/outputs/apk -name '*.apk' | head -1)
+             else
+               ./gradlew bundle${VARIANT}
+               ARTIFACT_PATH=$(find app/build/outputs/bundle -name '*.aab' | head -1)
+             fi
+             echo "ARTIFACT_PATH=$ARTIFACT_PATH" >> "$GITHUB_ENV"
    ```
+   - `<Variant>` は flavor + build type をキャメルケースで結合し先頭を大文字にしたもの（例: flavor `prod` → `bundleProdRelease`、flavor 無し → `bundleRelease`）。flavor が複数次元の場合は `./gradlew app:tasks --group=build` で正確なタスク名を確認する。
 5. 結果を報告する:
    - 作成したワークフローファイル
    - 設定が必要な GitHub Secrets 一覧:
@@ -115,7 +132,7 @@ Android / Flutter アプリを Firebase App Distribution に配信する GitHub 
    - 手動実行方法:
      ```bash
      gh workflow run deploy-android-firebase.yml \
-       -f groups="testers" -f release_notes="..." -f artifact="aab"
+       -f groups="testers" -f release_notes="..." -f artifact="aab" -f flavor="prod"
      ```
 
 ## エラー対応

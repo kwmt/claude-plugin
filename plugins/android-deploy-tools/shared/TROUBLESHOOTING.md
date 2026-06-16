@@ -30,6 +30,8 @@
 | エラーパターン | 原因 | 解決方法（ユーザーに選択肢提示） |
 |-------------|------|------|
 | `gradlew: Permission denied` | 実行権限なし | A) `chmod +x gradlew` B) CI 用に `git update-index --chmod=+x gradlew` でコミット |
+| `Task 'bundleRelease' not found` | flavor 定義によりタスク名が `bundle<Variant>` になっている | `./gradlew app:tasks --group=build` で正しい variant タスク名を確認して指定 |
+| 成果物が見つからない / パス不一致 | flavor により出力ディレクトリが variant 名を含む | 決め打ちせず `find app/build/outputs -name '*.aab'`（または `*.apk`）で実際のパスを特定 |
 | "SDK location not found" | `ANDROID_HOME` / `local.properties` 未設定 | A) `ANDROID_HOME` を設定 B) `local.properties` に `sdk.dir` を記載 |
 | 署名エラー（release ビルド） | リリース署名設定の不足 | `signingConfigs` / keystore の設定状況を確認・案内 |
 | Gradle ビルドタイムアウト | ビルド時間超過 | A) タイムアウト値を延長 B) `./gradlew clean` 後にクリーンビルド |
